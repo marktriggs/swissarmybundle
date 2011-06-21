@@ -35,6 +35,7 @@ import org.sakaiproject.nakamura.api.lite.Repository;
 import org.sakaiproject.nakamura.api.lite.content.*;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Bundle;
 import org.osgi.service.component.ComponentContext;
 
 import org.apache.felix.scr.annotations.Activate;
@@ -49,7 +50,6 @@ import org.python.core.PyException;
 import org.python.util.PythonInterpreter;
 
 
-
 @Component(immediate = true, metatype = true)
 @Service(value = SwissArmyService.class)
 public class SwissArmyServiceImpl implements SwissArmyService
@@ -60,14 +60,56 @@ public class SwissArmyServiceImpl implements SwissArmyService
     BundleContext bundleContext;
     ComponentContext componentContext;
 
-    // org.sakaiproject.nakamura.api.lite.content.ContentManager cm = null;
-    // javax.jcr.Session jcs = null;
-
     public void activate(ComponentContext context)
     {
         componentContext = context;
         bundleContext = componentContext.getBundleContext();
     }
+
+
+    class SwissArmyClassLoader extends URLClassLoader
+    {
+        ClassLoader baseLoader;
+
+        public SwissArmyClassLoader () {
+            super(new URL[] {}, Thread.currentThread().getContextClassLoader());
+        }
+
+        public SwissArmyClassLoader (ClassLoader baseLoader) {
+            super(new URL[] {}, baseLoader);
+            this.baseLoader = baseLoader;
+        }
+
+        protected Class findClass (String name) throws ClassNotFoundException
+        {
+            if (baseLoader != null) {
+                try {
+                    return baseLoader.loadClass (name);
+                } catch (ClassNotFoundException e) {
+                    // OK... you asked for it
+                }
+            }
+
+            // Clojure asks for a lot of classes with no packages, but we'll
+            // never find them anyway so don't bother.
+            if (name.contains(".")) {
+                Bundle[] bundles = bundleContext.getBundles();
+
+                for (Bundle b : bundles) {
+                    try {
+                        if (b != bundleContext.getBundle()) {
+                            return b.loadClass (name);
+                        }
+                    } catch (ClassNotFoundException e) {
+                        // keep trying...
+                    }
+                }
+            }
+
+            throw new ClassNotFoundException ("Couldn't find class: " + name);
+        }
+    }
+
 
 
     private int findAvailablePort (int port)
@@ -100,7 +142,7 @@ public class SwissArmyServiceImpl implements SwissArmyService
                              Object caller)
         throws ServletException
     {
-        Thread.currentThread().setContextClassLoader(caller.getClass().getClassLoader());
+        Thread.currentThread().setContextClassLoader(new SwissArmyClassLoader(caller.getClass().getClassLoader()));
         Object sleeper = new Object();
 
         try {
@@ -166,7 +208,7 @@ public class SwissArmyServiceImpl implements SwissArmyService
         throws ServletException
     {
         System.err.println ("LAUNCHING PYTHON");
-        Thread.currentThread().setContextClassLoader(caller.getClass().getClassLoader());
+        Thread.currentThread().setContextClassLoader(new SwissArmyClassLoader(caller.getClass().getClassLoader()));
         Object sleeper = new Object();
 
         try {
