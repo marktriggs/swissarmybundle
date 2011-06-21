@@ -1,0 +1,22 @@
+Using it:
+
+  * Run Nakamura with the extra JVM switch:
+
+      -Dorg.apache.sling.launcher.system.packages=,sun.misc
+
+  * Then:
+
+     $ cd nakamura/bundles
+     $ git clone [swissarmybundle.git url]
+     $ cd swissarmybundle
+     $ mvn -P redeploy clean install
+  
+  * Wait hours for Maven.  The bundle should eventually load.  Then:
+
+     $ curl http://localhost:8080/system/swissarmy/python
+
+  * telnet localhost 4010  (or whatever port shows in the Nakamura
+    output)
+
+  * profit?
+ 
