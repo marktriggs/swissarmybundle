@@ -11,12 +11,38 @@ Using it:
      $ cd swissarmybundle
      $ mvn -P redeploy clean install
   
-  * Wait hours for Maven.  The bundle should eventually load.  Then:
+  * Wait hours for Maven.  The bundle should eventually load
 
-     $ curl http://localhost:8080/system/swissarmy/python
+From here, there are a couple of ways of getting a REPL.  The
+simplest:
 
-  * telnet localhost 4010  (or whatever port shows in the Nakamura
-    output)
+   $ curl http://localhost:8080/system/swissarmy/python
 
-  * profit?
- 
+or
+
+   $ curl http://localhost:8080/system/swissarmy/clojure
+
+will open a socket listening on a port (shown in the Nakamura
+console).  From here, you can just:
+
+  # For Python
+  $ telnet localhost 4010
+
+or
+
+  # For Clojure
+  M-x slime-connect RET localhost RET 4010
+
+
+You can also provide a selector to get a REPL running in the context
+of a request for a particular resource:
+
+  $ curl -s http://localhost:8080/~mark/public/authprofile.python.json
+
+  $ curl -s http://localhost:8080/~mark/public/authprofile.clojure.json
+
+and then connect using the commands above.
+
+Here's a quick screenshot of running a Python repl:
+
+  http://dishevelled.net/nakamura-jython.png
