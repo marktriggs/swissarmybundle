@@ -46,3 +46,7 @@ and then connect using the commands above.
 Here's a quick screenshot of running a Python repl:
 
   http://dishevelled.net/nakamura-jython.png
+
+WARNING: This opens a security hole the size of... a large security
+hole, so be careful where you run this.
+
