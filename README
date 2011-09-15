@@ -20,12 +20,16 @@ simplest:
 
 or
 
+   $ curl http://localhost:8080/system/swissarmy/ruby
+
+or
+
    $ curl http://localhost:8080/system/swissarmy/clojure
 
 will open a socket listening on a port (shown in the Nakamura
 console).  From here, you can just:
 
-  # For Python
+  # For Python or Ruby
   $ telnet localhost 4010
 
 or
@@ -38,6 +42,8 @@ You can also provide a selector to get a REPL running in the context
 of a request for a particular resource:
 
   $ curl -s http://localhost:8080/~mark/public/authprofile.python.json
+
+  $ curl -s http://localhost:8080/~mark/public/authprofile.ruby.json
 
   $ curl -s http://localhost:8080/~mark/public/authprofile.clojure.json
 

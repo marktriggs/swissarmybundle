@@ -49,6 +49,13 @@ import clojure.lang.Compiler;
 import org.python.core.PyException;
 import org.python.util.PythonInterpreter;
 
+import org.jruby.Ruby;
+import org.jruby.runtime.GlobalVariable;
+import org.jruby.javasupport.JavaObject;
+import org.jruby.javasupport.JavaEmbedUtils;
+import org.jruby.javasupport.JavaUtil;
+
+
 
 @Component(immediate = true, metatype = true)
 @Service(value = SwissArmyService.class)
@@ -207,7 +214,6 @@ public class SwissArmyServiceImpl implements SwissArmyService
                               Object caller)
         throws ServletException
     {
-        System.err.println ("LAUNCHING PYTHON");
         Thread.currentThread().setContextClassLoader(new SwissArmyClassLoader(caller.getClass().getClassLoader()));
         Object sleeper = new Object();
 
@@ -241,6 +247,56 @@ public class SwissArmyServiceImpl implements SwissArmyService
 
             python.exec("start_repl(" + port + ")");
 
+        } catch (Exception e) {
+            // Don't let our exceptions interfere with the caller...
+            e.printStackTrace();
+        }
+    }
+
+
+    public void launchRuby (SlingHttpServletRequest request,
+                            SlingHttpServletResponse response,
+                            Map properties,
+                            Object caller)
+        throws ServletException
+    {
+        Thread.currentThread().setContextClassLoader(new SwissArmyClassLoader(caller.getClass().getClassLoader()));
+        Object sleeper = new Object();
+
+        try {
+
+            Ruby ruby = Ruby.getDefaultInstance ();
+
+            URL repl_code = bundleContext.getBundle ().getResource ("repl.rb");
+
+            StringBuilder sb = new StringBuilder ();
+            InputStreamReader in = new InputStreamReader(repl_code.openStream ());
+
+            char[] buf = new char[256];
+            int len;
+
+            while ((len = in.read (buf)) > 0) {
+                sb.append(buf, 0, len);
+            }
+
+            ruby.executeScript(sb.toString (), "repl.rb");
+
+            ruby.defineVariable(new GlobalVariable(ruby, "$sling_request", JavaUtil.convertJavaToRuby(ruby, request)));
+            ruby.defineVariable(new GlobalVariable(ruby, "$sling_response", JavaUtil.convertJavaToRuby(ruby, response)));
+            ruby.defineVariable(new GlobalVariable(ruby, "$repository", JavaUtil.convertJavaToRuby(ruby, repository)));
+            ruby.defineVariable(new GlobalVariable(ruby, "$component_context", JavaUtil.convertJavaToRuby(ruby, componentContext)));
+            ruby.defineVariable(new GlobalVariable(ruby, "$bundle_context", JavaUtil.convertJavaToRuby(ruby, bundleContext)));
+            ruby.defineVariable(new GlobalVariable(ruby, "$extra_properties", JavaUtil.convertJavaToRuby(ruby, properties)));
+
+            ruby.evalScriptlet("def reference(c)\n" +
+                               "  $bundle_context.getService($bundle_context.getServiceReference(c))\n" +
+                               "end\n");
+
+            int port = findAvailablePort(4010);
+
+            ruby.evalScriptlet("start_repl(" + port + ")");
+
+            JavaEmbedUtils.terminate(ruby);
         } catch (Exception e) {
             // Don't let our exceptions interfere with the caller...
             e.printStackTrace();

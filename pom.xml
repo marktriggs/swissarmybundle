@@ -39,11 +39,11 @@
           <instructions>
             <Bundle-Category> sakai-nakamura </Bundle-Category>
 
-	    <Import-Package>!com.informix.jdbc,!junit.framework,!org.antlr.stringtemplate,!org.apache.tools.ant,!org.apache.tools.ant.taskdefs,!org.apache.tools.ant.types,!org.apache.tools.ant.types.resources,!org.apache.tools.ant.util,!org.gnu.readline,!org.python.apache.xml.resolver,!org.python.apache.xml.resolver.readers,!org.python.objectweb.asm.tree,!org.python.objectweb.asm.tree.analysis,!sun.io,oracle.*;resolution:=optional,sun.*;resolution:=optional,*</Import-Package>
+	    <Import-Package>!com.informix.jdbc,!junit.framework,!org.antlr.stringtemplate,!org.apache.tools.ant,!org.apache.tools.ant.taskdefs,!org.apache.tools.ant.types,!org.apache.tools.ant.types.resources,!org.apache.tools.ant.util,!org.gnu.readline,!org.python.apache.xml.resolver,!org.python.apache.xml.resolver.readers,!org.python.objectweb.asm.tree,!org.python.objectweb.asm.tree.analysis,!org.jruby.ext.*,!org.jruby.org.*,!com.kenai.jffi,!com.martiansoftware.*,!com.sun.mirror.*,!jay.yydebug.*,!jnr.netdb.*,!org.apache.bsf.*,!org.jcodings.*,!org.jgrapht.*,!org.joda.time.*,!version=1.6.*,!org.joni.*,!org.yaml.snakeyaml.*,!com.kenai.jnr.x86asm,!sun.io,oracle.*;resolution:=optional,sun.*;resolution:=optional,*</Import-Package>
 	    <DynamicImport-Package>*</DynamicImport-Package>
 	    
             <Export-Package>org.sakaiproject.nakamura.swissarmybundle.*</Export-Package>
-            <Embed-Dependency>clojure,swank-clojure,accumulators,agent-utils,base64,classpath,combinatorics,command-line,complex-numbers,cond,condition,core,dataflow,datalog,def,error-kit,except,fcase,find-namespaces,fnmap,gen-html-docs,generic,graph,greatest-least,import-static,jar,java-utils,jmx,json,lazy-seqs,lazy-xml,logging,macro-utils,macros,map-utils,math,miglayout,mmap,mock,monadic-io-streams,monads,ns-utils,priority-map,probabilities,profile,prxml,reflect,repl-ln,repl-utils,seq,server-socket,set,singleton,sql,stream-utils,strint,swing-utils,trace,types,with-ns,zip-filter,jython-complete</Embed-Dependency>
+            <Embed-Dependency>clojure,swank-clojure,accumulators,agent-utils,base64,classpath,combinatorics,command-line,complex-numbers,cond,condition,core,dataflow,datalog,def,error-kit,except,fcase,find-namespaces,fnmap,gen-html-docs,generic,graph,greatest-least,import-static,jar,java-utils,jmx,json,lazy-seqs,lazy-xml,logging,macro-utils,macros,map-utils,math,miglayout,mmap,mock,monadic-io-streams,monads,ns-utils,priority-map,probabilities,profile,prxml,reflect,repl-ln,repl-utils,seq,server-socket,set,singleton,sql,stream-utils,strint,swing-utils,trace,types,with-ns,zip-filter,jython-complete,jruby-complete</Embed-Dependency>
             <Embed-Transitive>true</Embed-Transitive>
           </instructions>
         </configuration>
@@ -131,6 +131,18 @@
       <groupId>org.python</groupId>
       <artifactId>jython-complete</artifactId>
       <version>2.5.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby-complete</artifactId>
+      <version>1.6.4</version>
+      <exclusions>
+        <exclusion>
+          <groupId>jline</groupId>
+          <artifactId>jline</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>

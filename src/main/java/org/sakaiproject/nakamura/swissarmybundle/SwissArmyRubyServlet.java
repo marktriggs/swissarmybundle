@@ -41,8 +41,8 @@ import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Service;
 
 
-@SlingServlet(methods = "GET", resourceTypes = "sling/servlet/default", selectors = {"python", "clojure", "ruby"}, generateComponent=true)
-public class SwissArmyKnifeServlet extends SlingSafeMethodsServlet
+@SlingServlet(methods = "GET", paths = "/system/swissarmy/ruby", generateComponent=true)
+public class SwissArmyRubyServlet extends SlingSafeMethodsServlet
 {
     @Reference
     SwissArmyService sas;
@@ -52,18 +52,6 @@ public class SwissArmyKnifeServlet extends SlingSafeMethodsServlet
                          SlingHttpServletResponse response)
         throws ServletException, IOException
     {
-      for(String selector : request.getRequestPathInfo().getSelectors()) {
-        if("python".equals(selector)) {
-          sas.launchPython (request, response, new HashMap(), this);
-          return;
-        } else if ("clojure".equals(selector)) {
-          sas.launchSwank (request, response, new HashMap(), this);
-          return;
-        } else if ("ruby".equals(selector)) {
-          sas.launchRuby (request, response, new HashMap(), this);
-          return;
-        }
-
-      }
+        sas.launchRuby (request, response, new HashMap(), this);
     }
 }

@@ -39,4 +39,12 @@ public interface SwissArmyService
                               Map properties,
                               Object caller)
         throws ServletException;
+
+
+    public void launchRuby (SlingHttpServletRequest request,
+                              SlingHttpServletResponse response,
+                              Map properties,
+                              Object caller)
+        throws ServletException;
+
 }
