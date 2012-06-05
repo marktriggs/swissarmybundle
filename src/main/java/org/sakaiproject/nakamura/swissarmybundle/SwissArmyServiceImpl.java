@@ -176,8 +176,6 @@ public class SwissArmyServiceImpl implements SwissArmyService
             StringReader in = new StringReader
                 (String.format ("(do (require 'swank.swank)" +
                                 "    (ns user)" +
-                                "    (require 'clojure.contrib.repl-utils)" +
-                                "    (defn show [thing] (clojure.contrib.repl-utils/show thing))" +
                                 "    (defn reference [c] (.getService bundle-context (.getServiceReference bundle-context c)))" +
                                 "    (defn find-class [c] (some #(try (.loadClass %% c) (catch ClassNotFoundException _)) (.getBundles bundle-context)))" +
                                 "    (.println System/err \"Swank listening on port: %d\")" +
@@ -202,6 +200,7 @@ public class SwissArmyServiceImpl implements SwissArmyService
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             // Don't let our exceptions interfere with the caller...
         }
     }
